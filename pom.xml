@@ -508,7 +508,10 @@
     <c-client-sasl>yes</c-client-sasl>
     
     <aggregate.report.dir>zookeeper-isw2-aggregate/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
-
+	
+	<sonar.projectKey>piercirocaliandro_zookeeper</sonar.projectKey>
+	<sonar.moduleKey>${artifactId}</sonar.moduleKey>
+	
   </properties>
 
   <dependencyManagement>
