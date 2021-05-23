@@ -1,29 +1,6 @@
 language: java
 notifications:
   email: false
-matrix:
-  include:
-  - os: linux
-    arch: arm64
-    jdk: openjdk11
-  - os: linux
-    arch: s390x
-    jdk: openjdk11
-    addons:
-      apt:
-        update: true
-        packages:
-        - maven
-        - libcppunit-dev
-cache:
-  directories:
-  - "$HOME/.m2"
-addons:
-  apt:
-    packages:
-    - libcppunit-dev
-install:
-- if [ "${TRAVIS_CPU_ARCH}" == "arm64" ]; then sudo apt-get install maven; fi
 addons:
   sonarcloud:
     organization: "piercirocaliandro"
@@ -32,12 +9,6 @@ addons:
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar
-branches:
-  only:
-  - master
-  - branch-3.7
-  - branch-3.6
-  - branch-3.5
 env:
   global:
     secure: StZXbk733MWSu8QTHTldZD7Ou+dlIs3iWSbhaBi9yukiTasvmHURQEeNwpW/VxOsTSRv0XRqa5uT9VezBJB5jQUARexp1iu37DUN3JXwBD7p13eSyutGBjd6A0Qqf8wmx4bMiZKCOXOXTY8W73IprPJxHa33Pe7h7F9+hvt5P97LhV+QG69FuQVsM/LbvOLSBsNwr6Hr+BkZYko+9o7pgrM3W940SHLxFPgo10Jdxwl3vzQSJfcoKMtlrIv+Z+ktKzTmTANtXpRr64K6pfzp9BKcL+KGkfr86bAjEKIxXMohcud06p7y1W4IWXAZ97kSovurpo2O2HlocZLLR2bbxQ0LM4O3/mOYi8A8rqKX/DC2Get5IcejXF0m2ZbpcIQ2GKKuQsPeLDtKr1vVa6l59QNmN5wKN/UfHNU7LOSSb8sENlhWxGA49VebN2H4wNplGHscniGy13qP6CR2myys8eKcMvm9b+wfSH5lUkwYVo0IerF0nNAuH0uErVKuOe8cWh3d7P8MGkrZA4KcQ9g/ORDMpVdMXpukgCUZTP6YVBlDee7f69Wxk5183xH0/PSxORxi/yEED6r1kyMfYce15MMA1iYW15LgLhxQrOptErReYTjcwnehAw93VLzVhr3kl8EHIpRgmgZJSLsGAgXRxSAG1e+/0PZTIJCLbXrZI/Q=
