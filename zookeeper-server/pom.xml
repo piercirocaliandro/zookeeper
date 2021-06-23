@@ -279,15 +279,18 @@
         </executions>
       </plugin>
       
-      <!--  
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
+          <excludes>
+            <exclude>**/TestZkEphemNodes.java</exclude>
+          </excludes>
+          </configuration>
+      </plugin>
           
+          <!--  
           <forkCount>${surefire-forkcount}</forkCount>
           <reuseForks>false</reuseForks>
           <argLine>-Xmx512m -Dtest.junit.threads=${surefire-forkcount} -Dzookeeper.junit.threadid=${surefire.forkNumber} -javaagent:${org.jmockit:jmockit:jar}</argLine>
