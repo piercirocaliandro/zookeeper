@@ -18,6 +18,7 @@ import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.cli.AclParser;
 import org.apache.zookeeper.server.DataTree;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -27,44 +28,42 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
 public class TestDataTreeSerDes {
-	private BinaryInputArchive ia;
-	private BinaryOutputArchive oa;
+	private File file;
 	private String tag;
 	
+	private BinaryInputArchive ia;
+	private BinaryOutputArchive oa;
 	private DataTree dt;
-	private static File in;
 	
 	
 	@Parameters
 	public static Collection<Object[]> getParams() throws IOException{
-		in = new File("prova.txt");
-		in.createNewFile();
-		
 		return Arrays.asList(new Object[][] {
-			{new BinaryInputArchive(new DataInputStream(new 
-					FileInputStream(in))), 
-				new BinaryOutputArchive(new DataOutputStream(
-						new FileOutputStream(in))), "TAG"},
-			
-			/*{new BinaryInputArchive(new DataInputStream(new 
-					FileInputStream(in))), 
-				new BinaryOutputArchive(new DataOutputStream(
-						new FileOutputStream(in))), ""},
-			
-			{new BinaryInputArchive(new DataInputStream(new 
-					FileInputStream(in))), 
-				new BinaryOutputArchive(new DataOutputStream(
-						new FileOutputStream(in))), null},
-			
-			{null, null, "TAG"}*/
+			{new File("file.txt"), "TAG"},
+			{new File("file.txt"), ""},
+			{new File("file.txt"), null},
+			//{null, "TAG"}
 		});
 	}
 	
 	
-	public TestDataTreeSerDes(BinaryInputArchive ia, BinaryOutputArchive oa, String tag) 
-			throws NoNodeException, NodeExistsException {
-		this.ia = ia;
-		this.oa = oa;
+	public TestDataTreeSerDes(File file, String tag) 
+			throws NoNodeException, NodeExistsException, IOException {
+		
+		if(file != null) {
+			this.file = file;
+			this.file.createNewFile();
+		
+			this.ia = new BinaryInputArchive(new DataInputStream(new 
+					FileInputStream(file)));
+			this.oa = new BinaryOutputArchive(new DataOutputStream(
+					new FileOutputStream(file)));
+		}
+		else {
+			this.ia = null;
+			this.oa = null;
+		}
+		
 		this.tag = tag;
 		
 		this.dt = new DataTree();
@@ -73,11 +72,17 @@ public class TestDataTreeSerDes {
 	}
 	
 	
+	@After
+	public void cleanEnv() {
+		this.file.delete();
+	}
+	
+	
 	@Test
 	public void testSerDes() throws IOException, NoNodeException {
-		long before = in.length();
+		long before = file.length();
 		this.dt.serialize(this.oa, this.tag);
-		long after = in.length();
+		long after = file.length();
 		assertNotEquals(before, after);
 		
 		this.dt.deleteNode("/node1", 1L);

@@ -3,6 +3,9 @@ package it.uniroma2.datatreetests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,7 @@ import org.junit.Test;
 
 import it.uniroma2.datatree.utils.DataTreeNodeBean;
 import it.uniroma2.datatree.utils.DataTreeTestCommon;
+import net.bytebuddy.asm.Advice.This;
 
 /* The the creation and retrieval of ephemeral nodes */
 
@@ -26,13 +30,14 @@ public class TestDataTreeEphemeralNodes extends DataTreeTestCommon{
 	private DataTreeNodeBean dtnBean;
 	
 	
+	
 	@Before
 	public void configure() {
 		this.dt = new DataTree();
 		this.dtBeanList = this.getNodes();
 		this.createNodes(this.dtBeanList, this.dt);
 		this.dtnBean = new DataTreeNodeBean("/ephem", "aaaa".getBytes(), 
-				"world:1:c", 4L, 10, 1L, 10L);
+				"world:1:c", -1L, 10, 1L, 10L);
 	}
 	
 	
@@ -67,5 +72,21 @@ public class TestDataTreeEphemeralNodes extends DataTreeTestCommon{
 		int countAfter = this.dt.getEphemeralsCount();
 		
 		assertEquals(countBefore+1, countAfter, 0.0);
+	}
+	
+	
+	// review this test
+	@Test
+	public void testDumpEphems() throws IOException {
+		File f = new File("epehm_dumps.txt");
+		f.createNewFile();
+		PrintWriter pw = new PrintWriter(f);
+		
+		long before = f.getFreeSpace();
+		this.dt.dumpEphemerals(pw);
+		
+		assertEquals(before, f.getFreeSpace());
+		
+		f.delete();
 	}
 }

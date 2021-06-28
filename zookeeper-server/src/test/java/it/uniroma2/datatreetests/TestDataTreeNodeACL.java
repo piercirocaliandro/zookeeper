@@ -2,6 +2,7 @@ package it.uniroma2.datatreetests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -12,6 +13,8 @@ import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.cli.AclParser;
 import org.apache.zookeeper.data.Stat;
+import org.apache.zookeeper.data.StatPersisted;
+import org.apache.zookeeper.server.DataNode;
 import org.apache.zookeeper.server.DataTree;
 import org.junit.After;
 import org.junit.Test;
@@ -29,29 +32,41 @@ public class TestDataTreeNodeACL {
 	private String acls;
 	private int version;
 	private Stat stat;
+	private DataNode dn;
 	
 	
 	@Parameters
 	public static Collection<Object[]> getParams() {
 		return Arrays.asList(new Object[][] {
-			{"/valuetest", "world:10:c", 1, new Stat()},
-			{"", "world:10:c", 1, new Stat()},
-			{"/valuetest", "world:10:c", -11, new Stat()},
-			{"/valuetest", "dvw:1:h", 1, new Stat()},
+			{"/valuetest", "world:10:c", 1, new Stat(), 
+				new DataNode("AAAA".getBytes(), 1L, new StatPersisted())},
+			{"", "world:10:c", 1, new Stat(), 
+					new DataNode("AAAA".getBytes(), 1L, new StatPersisted())},
+			{"/valuetest", "world:10:c", -11, new Stat(), 
+				new DataNode("AAAA".getBytes(), 1L, null)},
+			{"/valuetest", "dvw:1:h", 1, new Stat(), 
+				new DataNode("".getBytes(), 1L, new StatPersisted())},
+			
+			//added to increase coverage
+			{"/nonode", "world:10:c", -11, new Stat(), 
+				new DataNode("AAAA".getBytes(), -1L, new StatPersisted())},
+			{"/valuetest", "world:10:c", -11, null, 
+				new DataNode("AAAA".getBytes(), 1L, new StatPersisted())},
 		});
 	}
 	
 	
-	public TestDataTreeNodeACL(String path, String acls, int version, Stat stat) {
-		this.configure(path, acls, version, stat);
+	public TestDataTreeNodeACL(String path, String acls, int version, Stat stat, DataNode dn) {
+		this.configure(path, acls, version, stat, dn);
 	}
 	
 	
-	private void configure(String path, String acls, int version, Stat stat) {
+	private void configure(String path, String acls, int version, Stat stat, DataNode dn) {
 		this.path = path;
 		this.acls = acls;
 		this.version = version;
 		this.stat = stat;
+		this.dn = dn;
 		
 		this.dt = new DataTree();
 		try {
@@ -64,13 +79,29 @@ public class TestDataTreeNodeACL {
 	
 	
 	@Test
-	public void testAclModify() throws NoNodeException {
-		this.dt.getACL(this.dt.getNode(this.path));
-		this.dt.statNode(this.path, null).getAversion();
-		Stat stat = this.dt.setACL(this.path, AclParser.parse(this.acls), this.version);
-		this.dt.getACL(this.path, this.stat);
-		
-		assertEquals(stat, this.stat);
+	public void testAclGet() {
+		try {
+			assertNotEquals(0, this.dt.getACL(this.path, this.stat).size());
+		} catch (NoNodeException e) {
+			Logger.getLogger("TACL").log(Level.WARNING, "Failed to set ACL\n");
+		}
+	}
+	
+	
+	@Test
+	public void testGetAclWithNode() {
+		assertEquals(1, this.dt.getACL(this.dn).size());
+	}
+	
+	
+	@Test
+	public void testAclSet() {
+		try {
+			Stat stat = this.dt.setACL(this.path, AclParser.parse(this.acls), this.version);
+			assertNotNull(stat);
+		} catch (NoNodeException e) {
+			Logger.getLogger("TACL").log(Level.WARNING, "Failed to get ACL\n");
+		}
 	}
 	
 	

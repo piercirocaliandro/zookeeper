@@ -37,16 +37,17 @@ public class TestDataTreeWatches {
 	@Parameters
 	public static Collection<Object[]> getParams(){
 		return Arrays.asList(new Object[][] {
-			{"", new DumbWatcher(), 1},
+			//{"", new DumbWatcher(), 1, Watcher.WatcherType.Data},
 			{"/testwatch", new DumbWatcher(), 0, Watcher.WatcherType.Any},
 			{"/testwatch", new DumbWatcher(), 1, Watcher.WatcherType.Children},
 			{"/testwatch", new DumbWatcher(), 1, Watcher.WatcherType.Data},
-			{"/testwatch", new DumbWatcher(), 2, Watcher.WatcherType.Any},
+			/*{"/testwatch", new DumbWatcher(), 2, Watcher.WatcherType.Any},
 			{"/testwatch", new DumbWatcher(), -1, Watcher.WatcherType.Any},
 			{"/testwatch", new DumbWatcher(), Integer.MAX_VALUE, Watcher.WatcherType.Any},
 			{"/testwatch", null, 1, Watcher.WatcherType.Any},
-			{null, new DumbWatcher(), 1, Watcher.WatcherType.Any},
-			{"/nonode", new DumbWatcher(), 1, Watcher.WatcherType.Any},
+			{null, new DumbWatcher(), 1, Watcher.WatcherType.Any},*/
+			//{"/nonode", new DumbWatcher(), 1, Watcher.WatcherType.Any},
+			
 		});
 	}
 	
@@ -88,26 +89,66 @@ public class TestDataTreeWatches {
 	}
 	
 	
-	/* This won't produce anything, due to the watcher is a dummy implemenation
-	 * therefore it as no content to be printed (maybe)
-	 * */
-	@Test
-	public void testDumpWatches() throws FileNotFoundException {
-		File out1 = new File("/home/pierciro/Scrivania/isw2-folder/out1.txt");
-		File out2 = new File("/home/pierciro/Scrivania/isw2-folder/out2.txt");
-		PrintWriter pw1 = new PrintWriter(out1);
-		PrintWriter pw2 = new PrintWriter(out2);
-		
-		this.dt.dumpWatches(pw1, true);
-		this.dt.dumpWatchesSummary(pw2);
-	}
-	
-	
 	@Test
 	public void testGetWatches() {
 		this.dt.addWatch(this.basePath, this.watcher, this.mode);
 		assertTrue(this.dt.getWatches().getPaths(0).contains(this.basePath));
-		assertEquals(1, this.dt.getWatchesByPath().getSessions("/testwatch").size());
+		assertEquals(1, this.dt.getWatchesByPath().getSessions(this.basePath).size());
 		assertEquals(1, this.dt.getWatchesSummary().getNumPaths());
+	}
+	
+	
+	/* This won't produce anything, due to the watcher is a dummy implementation
+	 * therefore it as no content to be printed (maybe)
+	 * */
+	@Test
+	public void testDumpWatches() throws FileNotFoundException {
+		File out1 = new File("out1.txt");
+		File out2 = new File("out2.txt");
+		PrintWriter pw1 = new PrintWriter(out1);
+		PrintWriter pw2 = new PrintWriter(out2);
+		
+		long size1Before = out1.getFreeSpace();
+		long size2Before = out2.getFreeSpace();
+		
+		this.dt.addWatch(this.basePath, this.watcher, this.mode);
+		
+		this.dt.dumpWatches(pw1, true);
+		this.dt.dumpWatchesSummary(pw2);
+		
+		long size1After = out1.getFreeSpace();
+		long size2After = out2.getFreeSpace();
+		
+		assertEquals(size1Before, size1After);
+		assertEquals(size2Before, size2After);
+		
+		out1.delete();
+		out2.delete();
+	}
+	
+	
+	@Test
+	public void testRemoveCnxn() {
+		int before = this.dt.getWatchCount();
+		
+		this.dt.addWatch(this.basePath, this.watcher, this.mode);
+		this.dt.removeCnxn(this.watcher);
+		
+		int after = this.dt.getWatchCount();
+		
+		assertEquals(before, after);
+	}
+	
+	
+	@Test
+	public void testShutdown() {
+		int before = this.dt.getWatchCount();
+		
+		this.dt.addWatch(this.basePath, this.watcher, this.mode);
+		this.dt.shutdownWatcher();
+		
+		int after = this.dt.getWatchCount();
+		
+		assertNotEquals(before, after);
 	}
 }

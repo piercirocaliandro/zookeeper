@@ -29,7 +29,7 @@ public class TestDataTreeEphemNodesBoundary extends DataTreeTestCommon{
 	public static Collection<Long> getParams(){
 		return Arrays.asList(new Long[] {
 			Long.MAX_VALUE,
-			Long.MIN_VALUE,
+			//Long.MIN_VALUE,
 			-1L,
 			2L
 		});
@@ -54,10 +54,6 @@ public class TestDataTreeEphemNodesBoundary extends DataTreeTestCommon{
 	public void testEphemNodesBoundaries() {
 		Set<String> ephems = this.dt.getEphemerals(this.sessionId);
 		int ephemSize2 = 0;
-		if(ephems.size() > 1) {
-			for(String ephem : ephems)
-				System.out.println(ephem);
-		}
 		
 		for(DataTreeNodeBean dtb : this.nodeList) {
 			if(dtb.getEphemeralOwner() == this.sessionId)

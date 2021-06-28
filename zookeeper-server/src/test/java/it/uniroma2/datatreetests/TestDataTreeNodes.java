@@ -1,6 +1,8 @@
 package it.uniroma2.datatreetests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -8,6 +10,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.data.Stat;
@@ -34,30 +38,31 @@ public class TestDataTreeNodes extends DataTreeTestCommon{
 	private String path;
 	private DumbWatcher dw;
 	private Stat stat;
-	private int newCVers;
-	private long zxid;
     
     
     @Parameters
     public static Collection<Object[]> getParams(){
     	return Arrays.asList(new Object[][] {
-    		{"/pierapp", new DumbWatcher(), new Stat(), 20, 1L},
+    		{"/pierapp", new DumbWatcher(), new Stat()},
     		{"/pierapp1", new DumbWatcher(), new Stat()},
-    		{"/../..", new DumbWatcher(), new Stat()},
-    		{null, new DumbWatcher(), new Stat()},
+    		//{"/../..", new DumbWatcher(), new Stat()},
     		{"/pierapp", null, new Stat()},
     		{"/pierapp", new DumbWatcher(), null},
+    		
+    		// added to increase coverage
+    		{"/", new DumbWatcher(), null},
+    		{"/nonode", new DumbWatcher(), new Stat()},
     	});
     }
     
     
-    public TestDataTreeNodes(String path, DumbWatcher dw, Stat stat, int newCVers, long zxid) 
+    public TestDataTreeNodes(String path, DumbWatcher dw, Stat stat) 
     		throws NoNodeException, NodeExistsException {
-    	this.configure(path, dw, stat, newCVers, zxid);
+    	this.configure(path, dw, stat);
     }
     
     
-    public void configure(String path, DumbWatcher dw, Stat stat, int newCVers, long zxid) 
+    public void configure(String path, DumbWatcher dw, Stat stat) 
     		throws NoNodeException, NodeExistsException {
     	this.dnBeanList = this.getNodes();
     	this.dataTree = new DataTree();
@@ -65,9 +70,7 @@ public class TestDataTreeNodes extends DataTreeTestCommon{
     	this.path = path;
     	this.dw = dw;
     	this.stat = stat;
-    	this.newCVers = newCVers;
-    	this.zxid = zxid;
-    	
+    
     	this.createNodes(this.dnBeanList, this.dataTree);
     }
     
@@ -85,33 +88,49 @@ public class TestDataTreeNodes extends DataTreeTestCommon{
     }
     
     
-    @Test
-    public void testAllChildrenRetrieve() throws NoNodeException, NodeExistsException {
-    	assertEquals(this.dataTree.getAllChildrenNumber(this.path), 
-    			this.getChildrenFromList().size());
-    }
-    
-    
-    @Test
-    public void testGetChildren() throws NoNodeException, NodeExistsException {
-    	List<String> children = this.dataTree.getChildren(this.path, this.stat, this.dw);
-    	List<String> retrChildren = this.getChildrenFromList();
+    private int getNumChildrenFromList(){
+    	int num = 0;
+    	if(this.path.equals("/"))
+    		return this.dnBeanList.size();
     	
-    	for(String child : retrChildren) {
-    		assertTrue(children.contains(child));
+    	for(DataTreeNodeBean dtb : this.dnBeanList) {
+    		String currNode = dtb.getPath();
+    		if(currNode.startsWith(this.path) && currNode.length() > this.path.length()
+    		&& currNode.charAt(this.path.length()) == '/')
+    			num++;
     	}
+    	return num;
     }
     
     
     @Test
-    public void clearTree() throws NoNodeException {
-    	int nodesPrev = this.dataTree.getNodeCount();
-    	int removed = 0;
-    	for(int i = this.dnBeanList.size()-1; i >= 0; i--) {
-    		this.dataTree.deleteNode(this.dnBeanList.get(i).getPath(), 
-    				this.dnBeanList.get(i).getZxid());
-    		removed++;
-    	}
-    	assertEquals(nodesPrev-removed, this.dataTree.getNodeCount());
+    public void testAllChildrenRetrieve() {
+    	int size = 0;
+    	if(this.path.equals("/"))
+    		size = 3;
+    	size += this.getNumChildrenFromList();
+    	assertEquals(this.dataTree.getAllChildrenNumber(this.path), size);
     }
+    
+    
+    @Test
+    public void testGetChildren() {
+    	List<String> children;
+		try {
+			children = this.dataTree.getChildren(this.path, this.stat, this.dw);
+			List<String> retrChildren = this.getChildrenFromList();
+	    	
+	    	for(String child : retrChildren) {
+	    		assertTrue(children.contains(child));
+	    	}
+		} catch (NoNodeException e) {
+			Logger.getLogger("LOG").log(Level.WARN, "Error while fetching children \n");
+		}
+    }
+    
+    
+    /*@Test
+    public void testGetNode() {
+    	assertNotNull(this.dataTree.getNode(this.path));
+    }*/
 }
