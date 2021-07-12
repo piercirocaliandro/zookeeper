@@ -73,6 +73,7 @@ public class TestFileTxnLogCurrentSize {
 	public void cleanEnv() {
 		try {
 			FileUtils.deleteDirectory(this.dir);
+			System.setProperty("zookeeper.forceSync", "no");
 		} catch (IOException e) {
 			this.logger.log(Level.WARNING, "Failed to delete directory\n");
 		}
