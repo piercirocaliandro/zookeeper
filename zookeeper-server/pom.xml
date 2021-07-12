@@ -306,5 +306,37 @@
       -->
      </plugins>
   </build>
+  
+  <profiles>
+  	<!-- PIT profile for mutation testing -->
+    <profile>
+	  <id>PIT-zookeeper-profile</id>
+	 <activation>
+	  	<activeByDefault>true</activeByDefault>
+	  </activation>
+	  <build>
+	    <plugins>
+		  <plugin>
+		    <groupId>org.pitest</groupId>
+			<artifactId>pitest-maven</artifactId>
+    		<version>1.6.7</version>
+    		
+    		<!-- Just mutate the classes that have been tested -->
+    		 
+    		<configuration>
+        	  <targetClasses>
+                <param>org.apache.zookeeper.server.DataTree</param>
+                <param>org.apache.zookeeper.server.persistence.FileTxnLog</param>
+        	  </targetClasses> 
+        	  <targetTests>
+                <param>it.uniroma2.datatreetests.*</param>
+                <param>it.uniroma2.filetxnlogtests.*</param>
+              </targetTests>
+    		</configuration>
+ 		  </plugin>
+		</plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

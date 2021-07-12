@@ -37,16 +37,9 @@ public class TestDataTreeWatches {
 	@Parameters
 	public static Collection<Object[]> getParams(){
 		return Arrays.asList(new Object[][] {
-			//{"", new DumbWatcher(), 1, Watcher.WatcherType.Data},
 			{"/testwatch", new DumbWatcher(), 0, Watcher.WatcherType.Any},
 			{"/testwatch", new DumbWatcher(), 1, Watcher.WatcherType.Children},
 			{"/testwatch", new DumbWatcher(), 1, Watcher.WatcherType.Data},
-			/*{"/testwatch", new DumbWatcher(), 2, Watcher.WatcherType.Any},
-			{"/testwatch", new DumbWatcher(), -1, Watcher.WatcherType.Any},
-			{"/testwatch", new DumbWatcher(), Integer.MAX_VALUE, Watcher.WatcherType.Any},
-			{"/testwatch", null, 1, Watcher.WatcherType.Any},
-			{null, new DumbWatcher(), 1, Watcher.WatcherType.Any},*/
-			//{"/nonode", new DumbWatcher(), 1, Watcher.WatcherType.Any},
 			
 		});
 	}
@@ -97,10 +90,7 @@ public class TestDataTreeWatches {
 		assertEquals(1, this.dt.getWatchesSummary().getNumPaths());
 	}
 	
-	
-	/* This won't produce anything, due to the watcher is a dummy implementation
-	 * therefore it as no content to be printed (maybe)
-	 * */
+
 	@Test
 	public void testDumpWatches() throws FileNotFoundException {
 		File out1 = new File("out1.txt");

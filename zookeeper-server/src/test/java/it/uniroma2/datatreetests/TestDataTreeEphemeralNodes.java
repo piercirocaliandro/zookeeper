@@ -1,6 +1,7 @@
 package it.uniroma2.datatreetests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -19,11 +20,9 @@ import org.junit.Test;
 
 import it.uniroma2.datatree.utils.DataTreeNodeBean;
 import it.uniroma2.datatree.utils.DataTreeTestCommon;
-import net.bytebuddy.asm.Advice.This;
 
 /* The the creation and retrieval of ephemeral nodes */
 
-//@RunWith(value = Parameterized.class)
 public class TestDataTreeEphemeralNodes extends DataTreeTestCommon{
 	private DataTree dt;
 	private List<DataTreeNodeBean> dtBeanList;
@@ -46,6 +45,9 @@ public class TestDataTreeEphemeralNodes extends DataTreeTestCommon{
 		Map<Long, Set<String>> ephNodes = this.dt.getEphemerals();
     	Map<Long, Set<String>> ephNodes2 = new HashMap<>();
     	long currIndex = 0;
+    	
+    	assertFalse(ephNodes.isEmpty());
+    	
     	for(DataTreeNodeBean db : this.dtBeanList) {
     		currIndex = db.getEphemeralOwner();
     		if(currIndex != -1)
@@ -75,7 +77,6 @@ public class TestDataTreeEphemeralNodes extends DataTreeTestCommon{
 	}
 	
 	
-	// review this test
 	@Test
 	public void testDumpEphems() throws IOException {
 		File f = new File("epehm_dumps.txt");

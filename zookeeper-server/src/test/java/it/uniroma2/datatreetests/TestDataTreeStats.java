@@ -5,9 +5,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.cli.AclParser;
@@ -31,6 +31,7 @@ public class TestDataTreeStats {
 	private String path;
 	private DumbWatcher watcher;
 	private DataTree dt;
+	private Logger logger;
 	
 	
 	@Parameters
@@ -44,10 +45,8 @@ public class TestDataTreeStats {
 			{1L, Long.MAX_VALUE, 1L, "/node", new DumbWatcher()},
 			{1L, 1000L, Long.MAX_VALUE, "/node", new DumbWatcher()},
 			{1L, 1000L, 1L, "", new DumbWatcher()},
-			//{1L, 1000L, 1L, null, new DumbWatcher()},
 			{1L, 1000L, 1L, "/node", null},
 			
-			//added to increase coverage
 			{1L, 1000L, 1L, "/nonode", new DumbWatcher()},
 		});
 	}
@@ -67,6 +66,7 @@ public class TestDataTreeStats {
 		this.path = path;
 		this.watcher = dw;
 		
+		this.logger = Logger.getLogger("DTS");
 		this.dt = new DataTree();
 		this.dt.createNode("/node", "data".getBytes(), AclParser.parse("world:1:c"), 
 				1L, 1, 1L, 1000L);
@@ -80,7 +80,7 @@ public class TestDataTreeStats {
 			stat = this.dt.statNode(this.path, this.watcher);
 			assertNotNull(stat);
 		} catch (NoNodeException e) {
-			Logger.getLogger("DTS").log(Level.WARN, "Error, cannot create Stat node \n");
+			this.logger.log(Level.SEVERE, "Error, cannot create Stat node \n");
 		}
 	}
 	

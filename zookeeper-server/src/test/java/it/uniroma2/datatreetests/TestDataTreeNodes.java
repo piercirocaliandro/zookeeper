@@ -1,17 +1,15 @@
 package it.uniroma2.datatreetests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.data.Stat;
@@ -38,6 +36,7 @@ public class TestDataTreeNodes extends DataTreeTestCommon{
 	private String path;
 	private DumbWatcher dw;
 	private Stat stat;
+	private Logger logger;
     
     
     @Parameters
@@ -45,11 +44,9 @@ public class TestDataTreeNodes extends DataTreeTestCommon{
     	return Arrays.asList(new Object[][] {
     		{"/pierapp", new DumbWatcher(), new Stat()},
     		{"/pierapp1", new DumbWatcher(), new Stat()},
-    		//{"/../..", new DumbWatcher(), new Stat()},
     		{"/pierapp", null, new Stat()},
     		{"/pierapp", new DumbWatcher(), null},
     		
-    		// added to increase coverage
     		{"/", new DumbWatcher(), null},
     		{"/nonode", new DumbWatcher(), new Stat()},
     	});
@@ -70,7 +67,8 @@ public class TestDataTreeNodes extends DataTreeTestCommon{
     	this.path = path;
     	this.dw = dw;
     	this.stat = stat;
-    
+    	
+    	this.logger = Logger.getLogger("LOG");
     	this.createNodes(this.dnBeanList, this.dataTree);
     }
     
@@ -124,13 +122,7 @@ public class TestDataTreeNodes extends DataTreeTestCommon{
 	    		assertTrue(children.contains(child));
 	    	}
 		} catch (NoNodeException e) {
-			Logger.getLogger("LOG").log(Level.WARN, "Error while fetching children \n");
+			this.logger.log(Level.SEVERE, "Error while fetching children \n");
 		}
     }
-    
-    
-    /*@Test
-    public void testGetNode() {
-    	assertNotNull(this.dataTree.getNode(this.path));
-    }*/
 }

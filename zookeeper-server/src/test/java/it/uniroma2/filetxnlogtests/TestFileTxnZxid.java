@@ -1,4 +1,4 @@
-package it.uniroma2.filetxnlog.tests;
+package it.uniroma2.filetxnlogtests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -38,11 +38,8 @@ public class TestFileTxnZxid {
 		return Arrays.asList(new Object[][] {
 			{1L, Arrays.asList(new File("log.-1"), new File("log.0"),
 					new File("log.1"))},
-			//{0L, Arrays.asList(new File("log.0"))},
-			//{-1L, Arrays.asList(new File("log.-1, log.1, log.2"))},
 			{1L, Arrays.asList()},
-			//{Long.MIN_VALUE, Arrays.asList(new File("log.1"))},
-			//{1L, null},
+			{-1L, Arrays.asList(new File("log.-1"))},
 		});
 	}
 	
@@ -87,7 +84,10 @@ public class TestFileTxnZxid {
 	
 	@Test
 	public void testLastLoggedZxid() {
-		assertEquals(this.zxid, this.txnLog.getLastLoggedZxid());
+		if(this.zxid < 0)
+			assertEquals(Math.abs(this.zxid), this.txnLog.getLastLoggedZxid());
+		else
+			assertEquals(this.zxid, this.txnLog.getLastLoggedZxid());
 	}
 	
 	
@@ -102,13 +102,7 @@ public class TestFileTxnZxid {
 	
 	
 	@Test
-	public void testLogTrunc() {
-		long beforeTrunc = this.txnLog.getTotalLogSize();
-		try {
-			assertTrue(this.txnLog.truncate(this.zxid));
-			assertTrue(beforeTrunc > this.txnLog.getTotalLogSize());
-		} catch (IOException e) {
-			this.logger.log(Level.WARNING, "Fail to truncate log with zxid:"+this.zxid);
-		}
+	public void truncate() throws IOException {
+		assertTrue(this.txnLog.truncate(this.zxid));
 	}
 }

@@ -28,15 +28,6 @@ public class TestDataTreeCopyStats {
 		return Arrays.asList(new Object[][] {
 			{new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), new Stat(), 
 				new StatPersisted(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 1L), new StatPersisted()},
-			/*{new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), null, 
-				new StatPersisted(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 1L), new StatPersisted()},
-			{null, new Stat(), 
-				new StatPersisted(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 1L), new StatPersisted()},
-			{new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), new Stat(), 
-                null, new StatPersisted()},
-			{new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), new Stat(), 
-    			new StatPersisted(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 1L), null},*/
-			
 		});
 	}
 	

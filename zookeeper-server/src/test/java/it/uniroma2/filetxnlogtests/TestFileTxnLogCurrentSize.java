@@ -1,4 +1,4 @@
-package it.uniroma2.filetxnlog.tests;
+package it.uniroma2.filetxnlogtests;
 
 import static org.junit.Assert.assertNotEquals;
 
@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +15,6 @@ import org.apache.zookeeper.server.persistence.FileTxnLog;
 import org.apache.zookeeper.txn.CreateTxn;
 import org.apache.zookeeper.txn.TxnHeader;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -64,7 +62,6 @@ public class TestFileTxnLogCurrentSize {
 		this.crTxn = new CreateTxn("/test1", "AAAA".getBytes(), 
 				AclParser.parse("world:1:c"), false, 0);
 		
-		// added to increase coverage
 		if(forceSync)
 			System.setProperty("zookeeper.forceSync", "yes");
 		else

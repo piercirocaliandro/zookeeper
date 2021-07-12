@@ -42,7 +42,6 @@ public class TestDataTreeSerDes {
 			{new File("file.txt"), "TAG"},
 			{new File("file.txt"), ""},
 			{new File("file.txt"), null},
-			//{null, "TAG"}
 		});
 	}
 	

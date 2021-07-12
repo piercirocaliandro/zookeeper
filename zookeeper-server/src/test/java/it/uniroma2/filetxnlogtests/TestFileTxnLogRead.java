@@ -1,7 +1,9 @@
-package it.uniroma2.filetxnlog.tests;
+package it.uniroma2.filetxnlogtests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -18,6 +20,7 @@ import org.apache.zookeeper.cli.AclParser;
 import org.apache.zookeeper.server.persistence.FileTxnLog;
 import org.apache.zookeeper.server.persistence.TxnLog;
 import org.apache.zookeeper.txn.CreateTxn;
+import org.apache.zookeeper.txn.TxnDigest;
 import org.apache.zookeeper.txn.TxnHeader;
 import org.junit.After;
 import org.junit.Test;
@@ -36,41 +39,44 @@ public class TestFileTxnLogRead {
 	private FileTxnLog fTxnLog;
 	private File logDir;
 	private Logger logger;
-	private long nEntries = 3L;
+	private long numEntries;
 	
 	
 	@Parameters
 	public static Collection<Object[]> getParams(){
+		
+		// the 3rd parameter was added to increase coverage
 		return Arrays.asList(new Object[][] {
-			{0L, true},
-			{1L, true},
-			{2L, true},
-			{1L, false},
-			{-1L, true},
-			//{Long.MAX_VALUE, true},
+			{0L, true, 3L},
+			{1L, true, 3L},
+			{2L, true, 3L},
+			{1L, false, 0L},
+			{-1L, true, 0L},
+			{Long.MAX_VALUE, true, 1L},
 		});
 	}
 	
 	
-	public TestFileTxnLogRead(long zxid, boolean fastForward) throws IOException {
-		this.configure(zxid, fastForward);
+	public TestFileTxnLogRead(long zxid, boolean fastForward, long entries) throws IOException {
+		this.configure(zxid, fastForward, entries);
 	}
 	
 	
-	private void configure(long zxid, boolean fastForward) throws IOException {
+	private void configure(long zxid, boolean fastForward, long entrSize) throws IOException {
 		this.logDir = new File("logdir");
 		this.logDir.mkdir();
 		
 		this.zxid = zxid;
 		this.fastForward = fastForward;
+		this.numEntries = entrSize;
 		
 		this.fTxnLog = new FileTxnLog(this.logDir);
 		this.logger = Logger.getLogger("TXNR");
 		
-		Map<TxnHeader, CreateTxn> entries = this.getLogEntries(this.nEntries);
+		Map<TxnHeader, CreateTxn> entries = this.getLogEntries(this.numEntries);
 		
 		for(TxnHeader header : entries.keySet()) {
-			this.fTxnLog.append(header, entries.get(header));
+			this.fTxnLog.append(header, entries.get(header), new TxnDigest());
 			this.fTxnLog.commit();
 		}
 	}
@@ -106,7 +112,12 @@ public class TestFileTxnLogRead {
 		TxnLog.TxnIterator iterator = this.fTxnLog.read(this.zxid);
 		TxnLog.TxnIterator iterator2 = this.fTxnLog.read(this.zxid, this.fastForward);
 		
-		for(long i = 0; i < this.nEntries-1; i++) {
+		for(long i = 0; i < this.numEntries-1; i++) {
+			assertNotNull(iterator.getHeader());
+			assertNotNull(iterator.getDigest());
+			assertNotNull(iterator.getTxn());
+			assertTrue(iterator.getStorageSize() >= 0);
+			
 			assertTrue(iterator.next());
 			assertTrue(iterator2.next());
 		}
@@ -125,6 +136,9 @@ public class TestFileTxnLogRead {
 		this.fTxnLog.rollLog();
 		long aftRoll = this.fTxnLog.getTotalLogSize();
 		
-		assertNotEquals(prevRoll, aftRoll);
+		if(this.numEntries == 0)
+			assertEquals(prevRoll, aftRoll);
+		else
+			assertNotEquals(prevRoll, aftRoll);
 	}
 }

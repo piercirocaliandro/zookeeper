@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
 import org.apache.zookeeper.server.DataTree;
-import org.apache.zookeeper.server.EphemeralType;
 
 /* This class is thought to be extended by all the test classes that need to create some
  * nodes in the DataTree before a test */
@@ -32,7 +31,6 @@ public class DataTreeTestCommon {
     			new DataTreeNodeBean("/pierapp1/app5", "EPH5".getBytes(), 
     					"world:10:w", 1L, 10, 1L, 10L),
     			
-    			// these nodes were added to increase branch coverage
     			new DataTreeNodeBean("/contnode", "aaaa".getBytes(), 
     					"world:10:w", Long.MIN_VALUE, 10, 1L, 10L),
     			new DataTreeNodeBean("/zookeeper/quota/node1", "aaaa".getBytes(), 

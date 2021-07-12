@@ -47,18 +47,12 @@ public class TestDataTreeTxn {
 			{new TxnHeader(-1L, 1, -3L, 1000L, OpCode.create), 
 					new CreateTxn("/", "aaaa".getBytes(), AclParser.parse("world:1:c"), true, 1), 
 					new TxnDigest(1, 1L)},
-			/*{null, new CreateTxn("/", "aaaa".getBytes(), AclParser.parse("world:1:c"), true, 1), 
-						new TxnDigest(1, 1L)},
-			{new TxnHeader(1L, 1, 1L, 1000L, OpCode.create), null, 
-							new TxnDigest(1, 1L)},*/
 			{new TxnHeader(1L, 1, 1L, 1000L, OpCode.create), 
                 new CreateTxn("/", "aaaa".getBytes(), AclParser.parse("world:1:c"), true, 1), 
                 null},
 			{new TxnHeader(1L, 1, 1L, 1000L, OpCode.create), 
 			    new CreateTxn("/asf", "aaaa".getBytes(), AclParser.parse("afr:1:v"), true, -1), 
 			    new TxnDigest(1, 1L)},
-			
-			// added to increase coverage
 			
 			{new TxnHeader(1L, 1, 1L, 1000L, OpCode.create2), 
 	                new CreateTxn("/", "aaaa".getBytes(), AclParser.parse("world:1:c"), true, 1), 
@@ -130,8 +124,6 @@ public class TestDataTreeTxn {
 			{new TxnHeader(0L, 1, -1L, 1000L, OpCode.create), 
 					new CreateTxn("/asf", "aaaa".getBytes(), AclParser.parse("world:1:c"), false, 1), 
 					new TxnDigest(1, 1L)},
-			/*{new TxnHeader(1L, 1, 1L, 1000L, OpCode.multi), 
-					null,  new TxnDigest(1, 1L)},*/
 		});
 		
 	}

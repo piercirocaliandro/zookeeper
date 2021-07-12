@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.server.DataTree;
-import org.apache.zookeeper.server.ZooKeeperServer;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,13 +33,9 @@ public class TestDataTreeDeleteNode extends DataTreeTestCommon{
 		return Arrays.asList(new Object[][] {
 			{"/pierapp", 1L},
 			{"/pierapp", -1L},
-			//{"/pierapp", Long.MAX_VALUE},
-			//{"", 1L},
 			{"/noparent/app23", 1L},
-			//{null, 1L},
 			{"/notpresent", 1L},
 			
-			//added to increase branch coverage
 			{"/contnode", Long.MIN_VALUE},
 			{"/zookeeper/quota/node1", 0L},
 			{"/", -1L},
@@ -84,7 +79,7 @@ public class TestDataTreeDeleteNode extends DataTreeTestCommon{
 			int nodesAfterRem = this.dt.getNodeCount();
 			assertEquals(nodesBeforeRem-1, nodesAfterRem);
 		} catch (NoNodeException e) {
-			this.logger.log(Level.WARNING, "Failed to remove the node with given path:" + this.path);
+			this.logger.log(Level.SEVERE, "Failed to remove the node with given path:" + this.path);
 		}
 	}
 }

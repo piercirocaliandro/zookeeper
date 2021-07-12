@@ -12,9 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/* Test getters for various types of nodes 
- * 
- * N.B: added to increase the value of coverage metrcis */
+/* Test getters for various types of nodes */
 
 public class TestDataTreeNodeTypes {
 	private DataTree dt;

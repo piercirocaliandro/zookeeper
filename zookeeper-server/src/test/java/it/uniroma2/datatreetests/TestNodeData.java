@@ -33,16 +33,15 @@ public class TestNodeData {
 	private Stat stat;
 	private DumbWatcher watcher;
 	
+	private Logger logger;
+	
 	@Parameters
 	public static Collection<Object[]> getParams() {
 		return Arrays.asList(new Object[][] {
 			{"/datatest", "".getBytes(), 1, 10L, 1000L, new Stat(), new DumbWatcher(), 
 				"BBBB".getBytes()},
-			//{"/prova", "".getBytes(), 1, 10L, 1000L, new Stat(), new DumbWatcher()},
 			{"", "".getBytes(), 1, 10L, 1000L, new Stat(), new DumbWatcher(), "BBBB".getBytes()},
-			//{null, "".getBytes(), 1, 10L, 1000L, new Stat(), new DumbWatcher()},
 			{"/datatest", "aaaa".getBytes(), 1, 10L, 1000L, new Stat(), null, "BBBB".getBytes()},
-			//{"/datatest", "aaaa".getBytes(), -1, 10L, 1000L, null, new DumbWatcher()},
 			{"/datatest", "aaaa".getBytes(), Integer.MAX_VALUE, 10L, 1000L, 
 				new Stat(), new DumbWatcher(), "BBBB".getBytes()},
 			{"/datatest", "aaaa".getBytes(), 1, -1L, 1000L, new Stat(), new DumbWatcher(), 
@@ -52,8 +51,6 @@ public class TestNodeData {
 			{"/datatest", "aaaa".getBytes(), 1, 10L, -1L, new Stat(), new DumbWatcher(), 
 					"".getBytes()},
 			
-			
-			// updated to increase branch coverage
 			{"/noexists", "aaaa".getBytes(), 1, 10L, -1L, new Stat(), new DumbWatcher(), 
 				"BBBB".getBytes()},
 			{"/datatest", null, 1, 10L, -1L, new Stat(), new DumbWatcher(), "BBBB".getBytes()},
@@ -62,7 +59,6 @@ public class TestNodeData {
 	}
 	
 	
-	/* prevData was added to increase branch coverage */
 	public TestNodeData(String path, byte[] data, int version, long zxid, long time, Stat stat, 
 			DumbWatcher dw, byte[] prevData) {
 		this.configure(path, data, version, zxid, time, stat, dw, prevData);
@@ -87,6 +83,8 @@ public class TestNodeData {
 		this.time = time;
 		this.stat = stat;
 		this.watcher = dw;
+		
+		this.logger = Logger.getLogger("TDN");
 	}
 	
 	
@@ -96,8 +94,9 @@ public class TestNodeData {
 		try {
 			data = this.dt.getData(this.path, this.stat, this.watcher);
 			assertNotEquals(data, this.data);
+			
 		} catch (NoNodeException e) {
-			Logger.getLogger("TDN").log(Level.SEVERE, "Error while dealing with data nodes\n");
+			this.logger.log(Level.SEVERE, "Error while dealing with data nodes\n");
 		}
 	}
 	
@@ -108,7 +107,7 @@ public class TestNodeData {
 			this.dt.setData(this.path, this.data, this.version, this.zxid, this.time);
 			assertEquals(this.dt.getData(this.path, this.stat, this.watcher) , this.data);
 		} catch (NoNodeException e) {
-			Logger.getLogger("TDN").log(Level.SEVERE, "Error while setting data nodes \n");
+			this.logger.log(Level.SEVERE, "Error while setting data nodes \n");
 		}
 	}
 }

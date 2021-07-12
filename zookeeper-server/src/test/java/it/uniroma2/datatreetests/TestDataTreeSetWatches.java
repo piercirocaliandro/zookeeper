@@ -15,10 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import it.uniroma2.datatree.utils.DataTreeTestCommon;
 
-/* Test only the setWatches() method, due to it gets a lot of input parameters
- * 
- * N.B: this test was added to increase coverage metrics 
- * */
+/* Test only the setWatches() method, due to it gets a lot of input parameters */
 
 
 @RunWith(value = Parameterized.class)
@@ -39,9 +36,6 @@ public class TestDataTreeSetWatches extends DataTreeTestCommon{
 			{1L, Arrays.asList("/pierapp", "/nonode1"), Arrays.asList("/pierapp1", "/nonode2"),
 				Arrays.asList("/pierapp/app1", "/nonode3"), Arrays.asList("/pierapp/app2", "/nonode4"),
 				Arrays.asList("/pierapp1/app3", "/nonode5"), new DumbWatcher()},
-			/*{1L, null, Arrays.asList("/pierapp1", "/nonode2"),
-				Arrays.asList("/pierapp/app1", "/nonode3"), Arrays.asList("/pierapp/app2", "/nonode4"),
-				Arrays.asList("/pierapp1/app3", "/nonode5"), new DumbWatcher()},*/
 			{Long.MIN_VALUE, Arrays.asList("/pierapp", "/nonode1"), 
 				Arrays.asList("/pierapp1", "/nonode2"), Arrays.asList("/pierapp/app1", "/nonode3"),
 				Arrays.asList("/pierapp/app2", "/nonode4"), 

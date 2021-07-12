@@ -1,4 +1,4 @@
-package it.uniroma2.filetxnlog.tests;
+package it.uniroma2.filetxnlogtests;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -27,9 +27,7 @@ public class TestFileTnxLogCreation {
 	public static Collection<String> getParams(){
 		return Arrays.asList(new String[] {
 			"logdir",
-			"logdir",
-			"logdir",
-			"logdir",
+			"",
 			null,
 		});
 	}
@@ -59,7 +57,7 @@ public class TestFileTnxLogCreation {
 			if(this.logDir != null)
 				FileUtils.deleteDirectory(this.logDir);
 		} catch (IOException e) {
-			this.logger.log(Level.WARNING, "Failed to delete directory\n");
+			this.logger.log(Level.SEVERE, "Failed to delete directory\n");
 		}
 	}
 	
@@ -69,15 +67,5 @@ public class TestFileTnxLogCreation {
 		FileTxnLog txnLog = new FileTxnLog(this.logDir);
 		assertNotNull(txnLog);
 		txnLog.close();
-		
-		//Read the data after the commit
-		/*FileTxnLog.FileTxnIterator fileTxnIterator = new FileTxnLog.FileTxnIterator(this.logDir, 1L);
-		CreateTxn fetchTxn = (CreateTxn) fileTxnIterator.getTxn();
-		CreateTxn record = (CreateTxn)this.record;
-		
-		System.out.println(fetchTxn.getPath()+" "+record.getPath());
-	    assertEquals(fetchTxn.getPath(), record.getPath());
-	    
-	    fileTxnIterator.close();*/
 	}
 }

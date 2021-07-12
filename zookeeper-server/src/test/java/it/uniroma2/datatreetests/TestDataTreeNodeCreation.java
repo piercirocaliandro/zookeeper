@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.KeeperException.NodeExistsException;
@@ -23,6 +25,7 @@ public class TestDataTreeNodeCreation {
     private DataTree dt;
     private Stat stat; //used to test the second variant of the method createNode
     
+    private Logger logger;
 	
     
     @Parameters
@@ -32,14 +35,9 @@ public class TestDataTreeNodeCreation {
     				-1L, 10, 1L, 1000L), new Stat()},
     		{new DataTreeNodeBean("/app", "".getBytes(), "ip:127.0.0.1:w", -1L, 1, 10L, 1000L),
     			new Stat()},
-    		/*{new DataTreeNodeBean("", "abcd".getBytes(), "world:10:w", -1, 1, 10L, 1000L), 
-    			new Stat()},*/
     		{new DataTreeNodeBean("/app", "abcd".getBytes(), "", -1L, 1, 10L, 1000L), new Stat()},
     		{new DataTreeNodeBean("/app", "abcd".getBytes(), "null", -1L, 1, 10L, 1000L), 
     			new Stat()},
-    		//{new DataTreeNodeBean(null, "abcd".getBytes(), "world:1:c", -1, 1, 10L, 1000L), null},
-    		//{new DataTreeNodeBean("/app/../", "abcd".getBytes(), "world:1:c", -1, 1, 10L, 1000L),
-    			//new Stat()},
     		{new DataTreeNodeBean("/app", "abcd".getBytes(), "world:1:c", 3L, 1, 10L, 1000L), 
     			new Stat()},
     		{new DataTreeNodeBean("/app", "abcd".getBytes(), "world:1:c", Long.MAX_VALUE, 
@@ -57,7 +55,6 @@ public class TestDataTreeNodeCreation {
     		{new DataTreeNodeBean("/app", "abcd".getBytes(), "world:1:c", -1L, 1, 1L, Long.MAX_VALUE),
     			new Stat()},
     		
-    		// these were added to increase branch coverage
     		{new DataTreeNodeBean("/fakeparent/app", "abcd".getBytes(), "world:1:c", 
     				-1L, 1, 1L, 1L), new Stat()},
     		{new DataTreeNodeBean("/zookeeper", "abcd".getBytes(), "world:1:c", 
@@ -83,6 +80,7 @@ public class TestDataTreeNodeCreation {
     	this.stat = stat;
     	
     	this.dt = new DataTree();
+    	this.logger = Logger.getLogger("DNC");
     }
     
     
@@ -98,8 +96,7 @@ public class TestDataTreeNodeCreation {
 	    	
 	    	this.dt.deleteNode(this.dtNodeBean.getPath(), this.dtNodeBean.getZxid());
 		} catch (NoNodeException | NodeExistsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.logger.log(Level.SEVERE, "Errors while deleting node \n");
 		}
     }
     
@@ -115,12 +112,8 @@ public class TestDataTreeNodeCreation {
 			assertEquals(nodePrev+1 , this.dt.getNodeCount());
 	    	
 	    	this.dt.deleteNode(this.dtNodeBean.getPath(), this.dtNodeBean.getZxid());
-		} catch (NoNodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NodeExistsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (NoNodeException | NodeExistsException e) {
+			this.logger.log(Level.SEVERE, "Errors while deleting node with Stat \n");
 		}
     }
 }

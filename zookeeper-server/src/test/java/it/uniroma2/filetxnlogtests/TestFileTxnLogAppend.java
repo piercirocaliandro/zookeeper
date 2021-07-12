@@ -1,12 +1,10 @@
-package it.uniroma2.filetxnlog.tests;
+package it.uniroma2.filetxnlogtests;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -35,7 +33,7 @@ public class TestFileTxnLogAppend {
 	private FileTxnLog txnLog;
 	private Logger logger;
 	
-	// txn digest was added to increment coverage
+	
 	@Parameters
 	public static Collection<Object[]> getParams(){
 		return Arrays.asList(new Object[][] {
@@ -54,7 +52,6 @@ public class TestFileTxnLogAppend {
 				new CreateTxn("/test1", "AAAA".getBytes(), null, false, 0), 
 				new TxnDigest()},
 			
-			// added to increase coverage
 			{new TxnHeader(1L, 0, Long.MIN_VALUE, 1000L, 1), 
 				new CreateTxn("/test1", "AAAA".getBytes(), null, false, 0), 
 				new TxnDigest()},

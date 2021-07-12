@@ -1,4 +1,4 @@
-package it.uniroma2.filetxnlog.tests;
+package it.uniroma2.filetxnlogtests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/* Test some methods, just to increase statement and branch coverage metrics */
 
 public class TestFileTxnLogDbAndSync {
 	private FileTxnLog txnLog;
@@ -42,7 +41,7 @@ public class TestFileTxnLogDbAndSync {
 			this.txnLog.close();
 			System.clearProperty("zookeeper.forceSync");
 		} catch (IOException e) {
-			this.logger.log(Level.WARNING, "Failed to clean env\n");
+			this.logger.log(Level.SEVERE, "Failed to clean env\n");
 		}
 	}
 	

@@ -16,7 +16,6 @@ import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.data.StatPersisted;
 import org.apache.zookeeper.server.DataNode;
 import org.apache.zookeeper.server.DataTree;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,6 +32,7 @@ public class TestDataTreeNodeACL {
 	private int version;
 	private Stat stat;
 	private DataNode dn;
+	private Logger logger;
 	
 	
 	@Parameters
@@ -47,7 +47,6 @@ public class TestDataTreeNodeACL {
 			{"/valuetest", "dvw:1:h", 1, new Stat(), 
 				new DataNode("".getBytes(), 1L, new StatPersisted())},
 			
-			//added to increase coverage
 			{"/nonode", "world:10:c", -11, new Stat(), 
 				new DataNode("AAAA".getBytes(), -1L, new StatPersisted())},
 			{"/valuetest", "world:10:c", -11, null, 
@@ -69,11 +68,13 @@ public class TestDataTreeNodeACL {
 		this.dn = dn;
 		
 		this.dt = new DataTree();
+		this.logger = Logger.getLogger("DNF");
+		
 		try {
 			this.dt.createNode("/valuetest", "abcde".getBytes(), AclParser.parse("world:10:r"), 
 					2L, 1, 10L, 100000L);
 		} catch (NoNodeException | NodeExistsException e) {
-			Logger.getLogger("DNF").log(Level.SEVERE, "Failed to create the node");
+			this.logger.log(Level.SEVERE, "Failed to create the node");
 		}
 	}
 	
@@ -83,7 +84,7 @@ public class TestDataTreeNodeACL {
 		try {
 			assertNotEquals(0, this.dt.getACL(this.path, this.stat).size());
 		} catch (NoNodeException e) {
-			Logger.getLogger("TACL").log(Level.WARNING, "Failed to set ACL\n");
+			this.logger.log(Level.WARNING, "Failed to set ACL\n");
 		}
 	}
 	
@@ -100,7 +101,7 @@ public class TestDataTreeNodeACL {
 			Stat stat = this.dt.setACL(this.path, AclParser.parse(this.acls), this.version);
 			assertNotNull(stat);
 		} catch (NoNodeException e) {
-			Logger.getLogger("TACL").log(Level.WARNING, "Failed to get ACL\n");
+			this.logger.log(Level.WARNING, "Failed to get ACL\n");
 		}
 	}
 	

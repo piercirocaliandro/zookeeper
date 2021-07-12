@@ -1,8 +1,6 @@
 package it.uniroma2.datatreetests;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -43,7 +41,7 @@ public class TestDataTreeDigest extends DataTreeTestCommon{
 	private File ioFile;
 	private long lastProcZxid;
 	
-	private boolean isEnabledDigest; // value to set in the ZKServer, only to increase coverage
+	private boolean isEnabledDigest;
 	
 	private DataTree dt;
 	
@@ -55,19 +53,12 @@ public class TestDataTreeDigest extends DataTreeTestCommon{
 				new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), 
 				new TxnDigest(1, 1L), new File("ser_des_digest.txt"), -1L, true},
 			
-			//added to increase test suite coverage values
-			/*{null, 
-				new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), 
-				new TxnDigest(1, 1L), new File("ser_des_digest.txt"), -1L},*/
 			{new TxnHeader(1L, 1, 1L, 1000L, 0), 
 				null, 
 				new TxnDigest(1, 0L), new File("ser_des_digest.txt"), -1L, true},
 			{new TxnHeader(1L, 1, 1L, 1000L, 0), 
 				null, 
 				new TxnDigest(0, 2L), new File("ser_des_digest.txt"), -1L, false},
-			/*{new TxnHeader(1L, 1, 1L, 1000L, 0), 
-				new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), 
-				new TxnDigest(1, 1L), null, -1L},*/
 			{new TxnHeader(1L, 1, 1L, 1000L, 0), 
 				new Stat(1L, 1L, 1000L, 1000L, 1, 1, 1, 1L, 3, 0, 2L), 
 				new TxnDigest(0, -1L), new File("ser_des_digest.txt"), Long.MIN_VALUE, true},

@@ -1,6 +1,8 @@
-package it.uniroma2.filetxnlog.tests;
+package it.uniroma2.filetxnlogtests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +61,7 @@ public class TestFileTxnLogSize {
 		try {
 			FileUtils.deleteDirectory(this.dir);
 		} catch (IOException e) {
-			this.logger.log(Level.WARNING, "Failed to close directory\n");
+			this.logger.log(Level.SEVERE, "Failed to close directory\n");
 		}
 	}
 	
@@ -68,6 +70,12 @@ public class TestFileTxnLogSize {
 	public void testTotSize() throws IOException {
 		this.log.setTotalLogSize(this.logSize);
 		assertEquals(this.log.getTotalLogSize(), this.logSize);
+		
+		if(this.logSize > 0)
+			assertFalse(this.log.getTotalLogSize() < 0);
+		else
+			assertTrue(this.log.getTotalLogSize() <= 0);
+		
 		this.log.close();
 	}
 }

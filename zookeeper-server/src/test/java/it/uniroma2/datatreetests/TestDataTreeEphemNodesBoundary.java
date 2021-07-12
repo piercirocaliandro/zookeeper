@@ -29,7 +29,6 @@ public class TestDataTreeEphemNodesBoundary extends DataTreeTestCommon{
 	public static Collection<Long> getParams(){
 		return Arrays.asList(new Long[] {
 			Long.MAX_VALUE,
-			//Long.MIN_VALUE,
 			-1L,
 			2L
 		});
